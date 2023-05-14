@@ -27,14 +27,14 @@ func main(){
 		panic(err)
 	}
 
-	id := 0
-	name := ""
-	ok := rows.Next()
-	if ok {
-		rows.Scan(&id ,&name)
+	for rows.Next() {
+		id := 0
+		name := ""
+		err := rows.Scan(&id ,&name)
+		if err != nil {
+			panic(err)
+		}
+		println(id, name)
 	}
-
-	rows.Close()
-
-	println(id, name)
+	
 }
