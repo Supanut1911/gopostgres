@@ -12,24 +12,36 @@ type Cover struct {
 	Name string
 }
 
+var db *sql.DB
+
 func main(){
+	var err error
+
 	var dataSoruce = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", "localhost", 5432, "postgres", "postgres", "dbpg", "disable")
-	db, err := sql.Open("postgres",dataSoruce)
+	db, err = sql.Open("postgres",dataSoruce)
 	if err != nil {
 		panic(err)
 	}
 
-	//check db is already connect
-	err = db.Ping()
+	covers, err := GetCovers()
 	if err != nil {
 		panic(err)
+	}
+	fmt.Printf("%#v", covers)
+}
+
+func GetCovers() ([]Cover, error){
+	//check db is already connect
+	err := db.Ping()
+	if err != nil {
+		return nil, err
 	}
 
 	//query
 	query := "select * from cover"
 	rows, err :=  db.Query(query)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	covers := []Cover{}
@@ -41,6 +53,6 @@ func main(){
 		}
 		covers = append(covers, cover)
 	}
-	
-	fmt.Printf("%#v", covers)
+
+	return covers, nil
 }
