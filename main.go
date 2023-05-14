@@ -7,6 +7,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type Cover struct {
+	Id int
+	Name string
+}
+
 func main(){
 	var dataSoruce = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", "localhost", 5432, "postgres", "postgres", "dbpg", "disable")
 	db, err := sql.Open("postgres",dataSoruce)
@@ -27,14 +32,15 @@ func main(){
 		panic(err)
 	}
 
+	covers := []Cover{}
 	for rows.Next() {
-		id := 0
-		name := ""
-		err := rows.Scan(&id ,&name)
+		cover := Cover{}
+		err := rows.Scan(&cover.Id ,&cover.Name)
 		if err != nil {
 			panic(err)
 		}
-		println(id, name)
+		covers = append(covers, cover)
 	}
 	
+	fmt.Printf("%#v", covers)
 }
