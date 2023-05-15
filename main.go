@@ -23,18 +23,27 @@ func main(){
 		panic(err)
 	}
 
+	coverNew := Cover{
+		Name: "cover-UFO",
+	}
+
+	err = AddCover(coverNew)
+	if err != nil {
+		panic(err)
+	}
+
 	covers, err := GetCovers()
 	if err != nil {
 		panic(err)
 	} 
-	_ = covers
-	// fmt.Printf("%#v \n", covers)
+	// _ = covers
+	fmt.Printf("%#v \n", covers)
 
-	cover,err  := GetCover(1)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(*cover)
+	// cover,err  := GetCover(1)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println(*cover)
 }
 
 func GetCovers() ([]Cover, error){
@@ -81,4 +90,20 @@ func GetCover(id int) (*Cover, error) {
 		return nil, err
 	}
 	return &cover, nil
+}
+
+func AddCover(cover Cover) error {
+	//check db is already connect
+		err := db.Ping()
+		if err != nil {
+			return err
+		}
+	
+	query := "INSERT INTO cover (name) values ($1)"
+	result, err := db.Exec(query, cover.Name)
+	if err != nil {
+		return err
+	}
+	_ = result
+	return nil
 }
