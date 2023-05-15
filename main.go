@@ -52,8 +52,16 @@ func main(){
 	if err != nil {
 		panic(err)
 	} 
-	// _ = covers
-	fmt.Printf("%#v \n", covers)
+	_ = covers
+
+	// fmt.Printf("%#v \n", covers)
+	
+	cover, err := GetCoverX(1)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(cover)
+
 
 	// cover,err  := GetCover(1)
 	// if err != nil {
@@ -98,6 +106,17 @@ func GetCovers() ([]Cover, error){
 	}
 
 	return covers, nil
+}
+
+func GetCoverX(id int) (*Cover, error) {
+	//query
+	query := "select id, name from cover where id = $1"
+	cover := Cover{}
+	err := db.Get(&cover, query, id)
+	if err != nil {
+		return nil, err
+	}
+	return &cover, nil
 }
 
 func GetCover(id int) (*Cover, error) {
