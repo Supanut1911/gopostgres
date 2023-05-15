@@ -26,8 +26,15 @@ func main(){
 	covers, err := GetCovers()
 	if err != nil {
 		panic(err)
+	} 
+	_ = covers
+	// fmt.Printf("%#v \n", covers)
+
+	cover,err  := GetCover(1)
+	if err != nil {
+		panic(err)
 	}
-	fmt.Printf("%#v", covers)
+	fmt.Println(*cover)
 }
 
 func GetCovers() ([]Cover, error){
@@ -55,4 +62,23 @@ func GetCovers() ([]Cover, error){
 	}
 
 	return covers, nil
+}
+
+func GetCover(id int) (*Cover, error) {
+	//check db is already connect
+	err := db.Ping()
+	if err != nil {
+		return nil, err
+	}
+
+	//query
+	query := "select id, name from cover where id = $1"
+	row := db.QueryRow(query, id)
+
+	cover := Cover{}
+	err = row.Scan(&cover.Id, &cover.Name)
+	if err != nil {
+		return nil, err
+	}
+	return &cover, nil
 }
