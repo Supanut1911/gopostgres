@@ -28,7 +28,14 @@ func main(){
 		Name: "cover-UFO",
 	}
 
-	err = AddCover(coverNew)
+	_ = coverNew
+
+	// err = AddCover(coverNew)
+	// if err != nil {
+		// panic(err)
+	// }
+
+	err = UpdateCover(9, "cover-ZEO")
 	if err != nil {
 		panic(err)
 	}
@@ -95,10 +102,10 @@ func GetCover(id int) (*Cover, error) {
 
 func AddCover(cover Cover) error {
 	//check db is already connect
-		err := db.Ping()
-		if err != nil {
-			return err
-		}
+	err := db.Ping()
+	if err != nil {
+		return err
+	}
 	
 	query := "INSERT INTO cover (name) values ($1)"
 	result, err := db.Exec(query, cover.Name)
@@ -111,8 +118,39 @@ func AddCover(cover Cover) error {
 		return err	
 	}
 	if affected <= 0 {
-		return errors.New("Can not insert")
+		return errors.New("can not insert")
 	}
 
+	return nil
+}
+
+func UpdateCover(id int, name string) error {
+	//check db is already connect
+	err := db.Ping()
+	if err != nil {
+		return err
+	}
+
+	//find cover
+	cover, err := GetCover(id)
+	if err != nil {
+		return err
+	}
+
+
+	//query update cover
+	query := "UPDATE cover set name = $1 where id = $2"
+	result, err := db.Exec(query, name, cover.Id)
+	if err != nil {
+		return err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affected <= 0 {
+		return errors.New("can not insert")
+	}
 	return nil
 }
