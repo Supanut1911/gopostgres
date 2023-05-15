@@ -1,10 +1,10 @@
 package main
 
 import (
-	"database/sql"
 	"errors"
 	"fmt"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
@@ -13,13 +13,13 @@ type Cover struct {
 	Name string
 }
 
-var db *sql.DB
+var db *sqlx.DB 
 
 func main(){
 	var err error
 
 	var dataSoruce = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s", "localhost", 5432, "postgres", "postgres", "dbpg", "disable")
-	db, err = sql.Open("postgres",dataSoruce)
+	db, err = sqlx.Open("postgres",dataSoruce)
 	if err != nil {
 		panic(err)
 	}
@@ -39,16 +39,16 @@ func main(){
 	// err = UpdateCover(9, "cover-ZEO")
 
 	//DELETE
-	err = DeleteCover(9)
-	if err != nil {
-		panic(err)
-	}
+	// err = DeleteCover(9)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	if err != nil {
-		panic(err)
-	}
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	covers, err := GetCovers()
+	covers, err := GetCoversX()
 	if err != nil {
 		panic(err)
 	} 
@@ -60,6 +60,17 @@ func main(){
 	// 	panic(err)
 	// }
 	// fmt.Println(*cover)
+}
+
+func GetCoversX() ([]Cover, error) {
+	query := "select id, name from cover"
+	covers := []Cover{}
+	err := db.Select(&covers, query)
+	if err != nil {
+		return nil, err
+	}
+
+	return covers , nil
 }
 
 func GetCovers() ([]Cover, error){
@@ -186,9 +197,5 @@ func DeleteCover(id int) error {
 		return errors.New("can not delete")
 	}
 
-	return nil
-	
-
-
-		
+	return nil	
 }
