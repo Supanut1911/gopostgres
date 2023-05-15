@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	_ "github.com/lib/pq"
@@ -104,6 +105,14 @@ func AddCover(cover Cover) error {
 	if err != nil {
 		return err
 	}
-	_ = result
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err	
+	}
+	if affected <= 0 {
+		return errors.New("Can not insert")
+	}
+
 	return nil
 }
