@@ -35,7 +35,15 @@ func main(){
 		// panic(err)
 	// }
 
-	err = UpdateCover(9, "cover-ZEO")
+	//UPFATE
+	// err = UpdateCover(9, "cover-ZEO")
+
+	//DELETE
+	err = DeleteCover(9)
+	if err != nil {
+		panic(err)
+	}
+
 	if err != nil {
 		panic(err)
 	}
@@ -153,4 +161,34 @@ func UpdateCover(id int, name string) error {
 		return errors.New("can not insert")
 	}
 	return nil
+}
+
+func DeleteCover(id int) error {
+	//check db is already connect
+		err := db.Ping()
+		if err != nil {
+			return err
+	}
+	
+	//query del cover
+	query := "DELETE FROM cover WHERE id = $1"
+	result, err := db.Exec(query, id)
+	
+	if err != nil {
+		return err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if affected <= 0 {
+		return errors.New("can not delete")
+	}
+
+	return nil
+	
+
+
+		
 }
